@@ -4,160 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CoN WW3 - Rechner</title>
-  <style>
-    :root {
-      --bg: rgba(18, 18, 18, 0.6);
-      --fg: #ffffff;
-      --accent: rgba(255, 255, 255, 0.1);
-      --circle-bg: rgba(255, 255, 255, 0.05);
-      --background-gradient: linear-gradient(to right, #141e30, #243b55);
-    }
-    [data-theme="light"] {
-      --bg: rgba(255, 255, 255, 0.6);
-      --fg: #000000;
-      --accent: rgba(0, 0, 0, 0.1);
-      --circle-bg: rgba(0, 0, 0, 0.05);
-      --background-gradient: linear-gradient(to right, #dfe9f3, #ffffff);
-    }
-
-    * {
-      user-select: none;
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--background-gradient);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: var(--fg);
-      overflow: hidden;
-      transition: background 0.5s ease;
-    }
-
-    .container {
-      backdrop-filter: blur(20px);
-      background: var(--bg);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      padding: 40px;
-      text-align: center;
-      max-width: 900px;
-      width: 100%;
-    }
-
-    .inputs {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin: 20px 0;
-      flex-wrap: wrap;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    input[type=number] {
-      width: 90px;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
-      background: var(--accent);
-      color: var(--fg);
-      text-align: center;
-      -moz-appearance: textfield;
-    }
-
-    input::-webkit-inner-spin-button,
-    input::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-
-    label {
-      margin-top: 6px;
-      font-size: 14px;
-    }
-
-    .output {
-      margin-top: 50px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: var(--fg);
-    }
-
-    .refresh-button {
-      background: var(--accent);
-      border-radius: 10px;
-      padding: 10px;
-      cursor: pointer;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-
-    .watermark {
-      position: fixed;
-      bottom: 10px;
-      font-size: 12px;
-      opacity: 0.4;
-    }
-
-    .screensaver {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      overflow: hidden;
-    }
-
-    .circle {
-      position: absolute;
-      border-radius: 50%;
-      background: var(--circle-bg);
-      animation: float 20s infinite linear;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(100vh) scale(0.5);
-      }
-      100% {
-        transform: translateY(-100vh) scale(1.2);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body oncontextmenu="return false">
-  <button class="theme-toggle" onclick="toggleTheme()" title="Theme wechseln">
-    🌙
-  </button>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Theme wechseln">🌙</button>
+
   <div class="container">
     <h2>CoN WW3 - Rechner</h2>
     <div class="inputs">
@@ -181,77 +32,12 @@
     <div class="refresh-button" onclick="updateResult()">🔄 Ergebnis berechnen</div>
     <div class="output" id="result"></div>
   </div>
+
+  <div class="history-container" id="historyContainer"></div>  
+
   <div class="watermark">2018 KEKFACTION | Made by Pandinja</div>
   <div class="screensaver" id="screensaver"></div>
 
-  <script>
-    const result = document.getElementById('result');
-    const toggleBtn = document.querySelector('.theme-toggle');
-
-    let scaledTotalSeconds = 0;
-
-    function updateResult() {
-      const days = parseInt(document.getElementById('days').value) || 0;
-      const hours = parseInt(document.getElementById('hours').value) || 0;
-      const minutes = parseInt(document.getElementById('minutes').value) || 0;
-      const seconds = parseInt(document.getElementById('seconds').value) || 0;
-
-      const originalTotalSeconds = (days * 86400) + (hours * 3600) + (minutes * 60) + seconds;
-      scaledTotalSeconds = Math.floor(originalTotalSeconds / 4);
-
-      displayTime(scaledTotalSeconds);
-    }
-
-    function displayTime(seconds) {
-      let remaining = seconds;
-      const newDays = Math.floor(remaining / 86400);
-      remaining %= 86400;
-      const newHours = Math.floor(remaining / 3600);
-      remaining %= 3600;
-      const newMinutes = Math.floor(remaining / 60);
-      const newSeconds = remaining % 60;
-
-      let parts = [];
-      if (newDays > 0) parts.push(`${newDays} Tage`);
-      if (newHours > 0) parts.push(`${newHours} Std`);
-      if (newMinutes > 0) parts.push(`${newMinutes} Min`);
-      if (newSeconds > 0 || parts.length === 0) parts.push(`${newSeconds} Sek`);
-
-      result.textContent = parts.join(', ');
-    }
-
-    setInterval(() => {
-      if (scaledTotalSeconds > 0) {
-        scaledTotalSeconds--;
-        displayTime(scaledTotalSeconds);
-      }
-    }, 1000);
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme');
-      const newTheme = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', newTheme);
-      toggleBtn.textContent = newTheme === 'dark' ? '🌙' : '☀️';
-    }
-
-    function createScreensaver() {
-      const screensaver = document.getElementById('screensaver');
-      screensaver.innerHTML = '';
-      for (let i = 0; i < 30; i++) {
-        const circle = document.createElement('div');
-        circle.classList.add('circle');
-        const size = Math.random() * 80 + 20;
-        circle.style.width = `${size}px`;
-        circle.style.height = `${size}px`;
-        circle.style.left = `${Math.random() * 100}%`;
-        circle.style.top = `${Math.random() * 100}%`;
-        circle.style.animationDuration = `${10 + Math.random() * 20}s`;
-        screensaver.appendChild(circle);
-      }
-    }
-
-    window.onload = createScreensaver;
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
