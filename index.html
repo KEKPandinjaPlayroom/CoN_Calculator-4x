@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoN WW3 - Rechner</title>
+  <style>
+    :root {
+      --bg: rgba(18, 18, 18, 0.6);
+      --fg: #ffffff;
+      --accent: rgba(255, 255, 255, 0.1);
+      --background-gradient: linear-gradient(to right, #141e30, #243b55);
+    }
+    [data-theme="light"] {
+      --bg: rgba(255, 255, 255, 0.6);
+      --fg: #000000;
+      --accent: rgba(0, 0, 0, 0.1);
+      --background-gradient: linear-gradient(to right, #dfe9f3, #ffffff);
+    }
+
+    * {
+      user-select: none;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--background-gradient);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: var(--fg);
+      overflow: hidden;
+      transition: background 0.5s ease;
+    }
+
+    .container {
+      backdrop-filter: blur(20px);
+      background: var(--bg);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      padding: 40px;
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .inputs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input[type=number] {
+      width: 80px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: var(--fg);
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+
+    input::-webkit-inner-spin-button,
+    input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+
+    label {
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .output {
+      margin-top: 40px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--fg);
+    }
+
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      font-size: 12px;
+      opacity: 0.4;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+  <button class="theme-toggle" onclick="toggleTheme()" title="Theme wechseln">
+    🌙
+  </button>
+  <div class="container">
+    <h2>CoN WW3 - Rechner</h2>
+    <div class="inputs">
+      <div class="input-group">
+        <input type="number" id="days" placeholder="0" min="0">
+        <label>Tage</label>
+      </div>
+      <div class="input-group">
+        <input type="number" id="hours" placeholder="0" min="0" max="23">
+        <label>Stunden</label>
+      </div>
+      <div class="input-group">
+        <input type="number" id="minutes" placeholder="0" min="0" max="59">
+        <label>Minuten</label>
+      </div>
+      <div class="input-group">
+        <input type="number" id="seconds" placeholder="0" min="0" max="59">
+        <label>Sekunden</label>
+      </div>
+    </div>
+    <div class="output" id="result"></div>
+  </div>
+  <div class="watermark">2018 KEKFACTION | Made by Pandinja</div>
+
+  <script>
+    const inputs = document.querySelectorAll('input');
+    const result = document.getElementById('result');
+    const toggleBtn = document.querySelector('.theme-toggle');
+
+    let scaledTotalSeconds = 0;
+    let originalTotalSeconds = 0;
+
+    function updateResult() {
+      const days = parseInt(document.getElementById('days').value) || 0;
+      const hours = parseInt(document.getElementById('hours').value) || 0;
+      const minutes = parseInt(document.getElementById('minutes').value) || 0;
+      const seconds = parseInt(document.getElementById('seconds').value) || 0;
+
+      originalTotalSeconds = (days * 86400) + (hours * 3600) + (minutes * 60) + seconds;
+      scaledTotalSeconds = Math.floor(originalTotalSeconds / 4);
+
+      displayTime(scaledTotalSeconds);
+    }
+
+    function displayTime(seconds) {
+      let remaining = seconds;
+      const newDays = Math.floor(remaining / 86400);
+      remaining %= 86400;
+      const newHours = Math.floor(remaining / 3600);
+      remaining %= 3600;
+      const newMinutes = Math.floor(remaining / 60);
+      const newSeconds = remaining % 60;
+
+      let parts = [];
+      if (newDays > 0) parts.push(`${newDays} Tage`);
+      if (newHours > 0) parts.push(`${newHours} Std`);
+      if (newMinutes > 0) parts.push(`${newMinutes} Min`);
+      if (newSeconds > 0) parts.push(`${newSeconds} Sek`);
+
+      result.textContent = parts.join(', ');
+    }
+
+    inputs.forEach(input => {
+      input.addEventListener('input', updateResult);
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateResult();
+      setInterval(() => {
+        if (scaledTotalSeconds > 0) {
+          scaledTotalSeconds--;
+          displayTime(scaledTotalSeconds);
+
+          const syncedOriginalSeconds = scaledTotalSeconds * 4;
+
+          document.getElementById('days').value = Math.floor(syncedOriginalSeconds / 86400);
+          document.getElementById('hours').value = Math.floor((syncedOriginalSeconds % 86400) / 3600);
+          document.getElementById('minutes').value = Math.floor((syncedOriginalSeconds % 3600) / 60);
+          document.getElementById('seconds').value = syncedOriginalSeconds % 60;
+        }
+      }, 1000);
+    });
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      toggleBtn.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+    }
+  </script>
+</body>
+</html>
