@@ -9,12 +9,14 @@
       --bg: rgba(18, 18, 18, 0.6);
       --fg: #ffffff;
       --accent: rgba(255, 255, 255, 0.1);
+      --circle-bg: rgba(255, 255, 255, 0.05);
       --background-gradient: linear-gradient(to right, #141e30, #243b55);
     }
     [data-theme="light"] {
       --bg: rgba(255, 255, 255, 0.6);
       --fg: #000000;
       --accent: rgba(0, 0, 0, 0.1);
+      --circle-bg: rgba(0, 0, 0, 0.05);
       --background-gradient: linear-gradient(to right, #dfe9f3, #ffffff);
     }
 
@@ -45,7 +47,7 @@
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       padding: 40px;
       text-align: center;
-      max-width: 700px;
+      max-width: 900px;
       width: 100%;
     }
 
@@ -92,7 +94,7 @@
     }
 
     .output {
-      margin-top: 40px;
+      margin-top: 50px;
       font-size: 20px;
       font-weight: bold;
     }
@@ -138,7 +140,7 @@
     .circle {
       position: absolute;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--circle-bg);
       animation: float 20s infinite linear;
     }
 
@@ -213,7 +215,7 @@
       if (newDays > 0) parts.push(`${newDays} Tage`);
       if (newHours > 0) parts.push(`${newHours} Std`);
       if (newMinutes > 0) parts.push(`${newMinutes} Min`);
-      if (newSeconds > 0) parts.push(`${newSeconds} Sek`);
+      if (newSeconds > 0 || parts.length === 0) parts.push(`${newSeconds} Sek`);
 
       result.textContent = parts.join(', ');
     }
@@ -235,6 +237,7 @@
 
     function createScreensaver() {
       const screensaver = document.getElementById('screensaver');
+      screensaver.innerHTML = '';
       for (let i = 0; i < 30; i++) {
         const circle = document.createElement('div');
         circle.classList.add('circle');
